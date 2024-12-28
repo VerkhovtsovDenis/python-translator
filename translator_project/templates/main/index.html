@@ -10,13 +10,19 @@
 	<div class="row mt-4">
 		<!-- Блок ввода кода -->
 		<div class="col-md-6">
-			<textarea class="form-control" rows="10" placeholder="Введите ваш код на Pascal..."></textarea>
+			<form action="" method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<button class="btn btn-primary">Конвертировать</button>
+			</form>
+	
+	
 		</div>
 		<!-- Блок Drag and Drop -->
 		<div class="col-md-6 d-flex align-items-center justify-content-center border border-dashed border-secondary rounded" style="height: 250px;">
 			<div class="text-center">
 				<p class="mb-2">Перетащите сюда файлы</p>
-				<button class="btn btn-outline-secondary">Или выберите файлы</button>
+				<button class="btn btn-outline-secondary" name="upload">Или выберите файлы</button>
 			</div>
 		</div>
 	</div>
