@@ -1,0 +1,10 @@
+2024-12-30 03:25:50,869 - DEBUG - TranslatorManager initialized.
+2024-12-30 03:25:50,885 - INFO - Task added. Queue size: 1/10
+2024-12-30 03:25:50,886 - DEBUG - Processing task: program aaa; var i, j: real; b: string; begin i := 1.9 + 0.1; writeln(i); end.
+2024-12-30 03:25:50,887 - DEBUG - start debugging
+2024-12-30 03:25:50,887 - DEBUG - Translation are start translate code: CodeToken(pascal_code='program aaa; var i, j: real; b: string; begin i := 1.9 + 0.1; writeln(i); end.', python_code=None, info=None, errors=None)
+2024-12-30 03:25:50,893 - DEBUG - Starting new HTTP connection (1): localhost:8000
+2024-12-30 03:25:52,979 - DEBUG - http://localhost:8000 "POST /translate HTTP/1.1" 422 286
+2024-12-30 03:25:52,980 - DEBUG - Translation are get response: <Response [422]>
+2024-12-30 03:25:52,980 - ERROR - Error during translation: 422 Client Error: Unprocessable Entity for url: http://localhost:8000/translate
+2024-12-30 03:25:52,980 - INFO - TranslatorManager stopped.
