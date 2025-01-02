@@ -17,7 +17,8 @@ class CodeToken:
 class TranslatorManager:
     def __init__(self, api_url: str, max_queue_size: int = 10):
         self.api_url = api_url
-        self.queue = deque(maxlen=max_queue_size)
+        self.queue_request = deque(maxlen=max_queue_size)
+        self.queue_answers = deque(maxlen=2*max_queue_size)
         self.active = True  # Флаг активности
         self.lock = Lock()
         self.worker_thread = Thread(target=self._process_queue, daemon=True)
@@ -37,23 +38,25 @@ class TranslatorManager:
         logging.info("TranslatorManager stopped.")
 
     def _process_queue(self):
-        while self.active or self.queue:
+        while self.active or self.queue_request:
             task: Optional[CodeToken] = None
 
             with self.lock:
-                if self.queue:
-                    task = self.queue.popleft()
+                if self.queue_request:
+                    task = self.queue_request.popleft()
 
             if task:
                 logging.debug(f"Processing task: {task.pascal_code}")
                 self._translate(task)
+                self.queue_answers.append(task)
+                
 
     def add_task(self, pascal_code: str):
         with self.lock:
-            if len(self.queue) < self.queue.maxlen:
-                self.queue.append(CodeToken(pascal_code=pascal_code))
-                logging.info(f"Task added. Queue size: {len(self.queue)}/" +
-                             f"{self.queue.maxlen}")
+            if len(self.queue_request) < self.queue_request.maxlen:
+                self.queue_request.append(CodeToken(pascal_code=pascal_code))
+                logging.info(f"Task added. Queue size: {len(self.queue_request)}/" +
+                             f"{self.queue_request.maxlen}")
             else:
                 logging.warning("Queue is full. Task rejected.")
 
@@ -89,7 +92,13 @@ class TranslatorManager:
             task.errors = str(other_ex)
             task.info = "Translation failed."
             logging.error(f"Error during translation: {task.errors}")
-
+    def __str__(self):
+        if len(self.queue_answers) != 0:
+            return f"""deque has {len(self.queue_answers)} elenemts:\n""" +\
+                f"""{ [f'{item}, ' for item in self.queue_answers] };"""
+        else:
+            return 'deque is empty'
+        
 
 if __name__ == '__main__':
     api_url = "http://localhost:8000/translate"
