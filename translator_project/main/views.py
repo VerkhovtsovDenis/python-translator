@@ -23,15 +23,14 @@ class ConsoleData:
 
 # Инициализация TranslatorManager
 api_url = "http://localhost:8000/translate"
-translator = TranslatorManager(api_url=api_url, max_queue_size=10)
+translator = TranslatorManager(api_url=api_url)
 console = []
-
 
 
 def index(request):
     template_name = 'main/index.html'
     global console
-
+    python_code = None
     if request.method == "POST":
         form = TextForm(request.POST)
         if form.is_valid():
@@ -40,15 +39,18 @@ def index(request):
             
             # Добавляем задачу на перевод
             translator.add_task(pascal_code)
-            
-            # Ждем выполнения задачи (можно оптимизировать с помощью асинхронности)
-            time.sleep(2)  # Увеличить время, если необходимо
+            print(translator)
+            while not translator.queue_answers:
+                print('wait')
+                time.sleep(2)
 
-            # Проверяем результат обработки
-            if translator.queue:  # Если очередь не пуста, берем последний результат
-                last_task = translator.queue[-1]
+            if translator.queue_answers:  # Если очередь не пуста, берем последний результат
+                last_task = translator.queue_answers.popleft()
+
                 if last_task.python_code:
-                    console.append(ConsoleData(Status.success, last_task.python_code))
+                    console.append(ConsoleData(Status.success, last_task.info))
+                    python_code = last_task.python_code
+
                 elif last_task.errors:
                     console.append(ConsoleData(Status.error, last_task.errors))
                 else:
@@ -62,7 +64,7 @@ def index(request):
     else:
         form = TextForm()
 
-    return render(request, template_name, {'console': console, 'form': form})
+    return render(request, template_name, {'console': console, 'form': form, 'python_code': python_code})
 
 
 def about(request):
