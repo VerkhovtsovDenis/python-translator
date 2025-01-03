@@ -4,5 +4,5 @@ from . import vievs
 
 urlpatterns = [
     path('', include('main.urls'), name='main'),
-    path('history/', include('history.urls'), name='history'),
+    
 ]
