@@ -50,14 +50,18 @@ def index(request):
     python_code = str()
 
     if request.method == "POST":
-        form = TextForm(request.POST)
+        my_task = CodeToken()
+
+        form = PascalCodeFrom(request.POST)
+
         if form.is_valid():
-            # Получаем Pascal-код из формы
-            pascal_code = form.cleaned_data['text']
-            
-            # Добавляем задачу на перевод
+            pascal_code = form.cleaned_data['pascal_code']
             translator.add_task(pascal_code)
-            print(translator)
+
+            new_tiket = History.objects.create(
+                ip_address=get_client_ip(request=request),
+                pascal_code=pascal_code,
+            )
             while not translator.queue_answers:
                 print('wait')
                 time.sleep(2)
@@ -65,17 +69,20 @@ def index(request):
             if translator.queue_answers:
                 my_task: CodeToken = translator.queue_answers.popleft()
 
-                if last_task.python_code:
-                    console.append(ConsoleData(Status.success, last_task.info))
-                    python_code = last_task.python_code
-
-                elif last_task.errors:
-                    console.append(ConsoleData(Status.error, last_task.errors))
+                if my_task.python_code:
+                    console.append(ConsoleData(Status.success, my_task.info))
+                    new_tiket.python_code = my_task.python_code
+                elif my_task.errors:
+                    console.append(ConsoleData(Status.error, my_task.errors))
+                    new_tiket.translating_errors = my_task.errors
                 else:
                     console.append(ConsoleData(Status.info, 'Перевод в процессе...'))
-
             else:
                 console.append(ConsoleData(Status.info, 'Очередь пуста, задача обрабатывается'))
+            
+            new_tiket.save()
+            print(f'Данные должны были быть сохранены: {new_tiket}')
+
         else:
             console.append(ConsoleData(Status.error, 'Форма невалидна.'))
     else:
