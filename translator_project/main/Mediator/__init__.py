@@ -2,13 +2,13 @@ from dataclasses import dataclass
 from collections import deque
 import requests
 from threading import Thread, Lock
-from typing import Optional
+from typing import Optional, Deque
 import logging
 
 
 @dataclass
 class CodeToken:
-    pascal_code: str
+    pascal_code: Optional[str] = None
     python_code: Optional[str] = None
     info: Optional[str] = None
     errors: Optional[str] = None
@@ -17,8 +17,8 @@ class CodeToken:
 class TranslatorManager:
     def __init__(self, api_url: str, max_queue_size: int = 10):
         self.api_url = api_url
-        self.queue_request = deque(maxlen=max_queue_size)
-        self.queue_answers = deque(maxlen=2*max_queue_size)
+        self.queue_request: Deque[CodeToken] = deque(maxlen=max_queue_size)
+        self.queue_answers: Deque[CodeToken] = deque(maxlen=2*max_queue_size)
         self.active = True  # Флаг активности
         self.lock = Lock()
         self.worker_thread = Thread(target=self._process_queue, daemon=True)
