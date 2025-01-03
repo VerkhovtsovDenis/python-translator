@@ -71,6 +71,7 @@ def index(request):
 
                 if my_task.python_code:
                     console.append(ConsoleData(Status.success, my_task.info))
+                    python_code = my_task.python_code
                     new_tiket.python_code = my_task.python_code
                 elif my_task.errors:
                     console.append(ConsoleData(Status.error, my_task.errors))
