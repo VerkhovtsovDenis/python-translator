@@ -15,10 +15,18 @@ class ConsoleData:
     status: Enum
     message: str
 
+    @staticmethod
+    def time_to_str():
+        time_now = time.localtime(time.time())
+        formst = time.strftime("%Y-%B-%d %H:%M:%S", time_now)
+        return formst
+
     def __init__(self, status, message):
-        self.time_now = str(time.strftime("%Y-%B-%d %H:%M:%S", time.localtime(time.time())))
+        self.time_now = ConsoleData.time_to_str()
         self.status = status
         self.message = message
+    
+
         
 
 # Инициализация TranslatorManager
