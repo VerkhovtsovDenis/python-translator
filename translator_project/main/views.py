@@ -1,11 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import TextForm
-from .Mediator import TranslatorManager  # Импорт модуля Mediator
+from .forms import PascalCodeFrom
+from .Mediator import TranslatorManager, CodeToken  # Импорт модуля Mediator
 import time
 from dataclasses import dataclass
 from enum import Enum
-
+from .models import History
+from typing import List
 
 Status = Enum('status', [('success', 1), ('error', 2), ('info', 3)])
 
@@ -46,7 +47,8 @@ def get_client_ip(request):
 def index(request):
     template_name = 'main/index.html'
     global console
-    python_code = None
+    python_code = str()
+
     if request.method == "POST":
         form = TextForm(request.POST)
         if form.is_valid():
@@ -60,8 +62,8 @@ def index(request):
                 print('wait')
                 time.sleep(2)
 
-            if translator.queue_answers:  # Если очередь не пуста, берем последний результат
-                last_task = translator.queue_answers.popleft()
+            if translator.queue_answers:
+                my_task: CodeToken = translator.queue_answers.popleft()
 
                 if last_task.python_code:
                     console.append(ConsoleData(Status.success, last_task.info))
@@ -75,10 +77,9 @@ def index(request):
             else:
                 console.append(ConsoleData(Status.info, 'Очередь пуста, задача обрабатывается'))
         else:
-            # TODO - недостижимый код, при невалидности формы post запрос не будет сгенерирован
             console.append(ConsoleData(Status.error, 'Форма невалидна.'))
     else:
-        form = TextForm()
+        form = PascalCodeFrom()
 
     return render(request, template_name, {'console': console, 'form': form, 'python_code': python_code})
 
