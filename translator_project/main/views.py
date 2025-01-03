@@ -63,7 +63,6 @@ def index(request):
                 pascal_code=pascal_code,
             )
             while not translator.queue_answers:
-                print('wait')
                 time.sleep(2)
 
             if translator.queue_answers:
@@ -82,7 +81,6 @@ def index(request):
                 console.append(ConsoleData(Status.info, 'Очередь пуста, задача обрабатывается'))
             
             new_tiket.save()
-            print(f'Данные должны были быть сохранены: {new_tiket}')
 
         else:
             console.append(ConsoleData(Status.error, 'Форма невалидна.'))
@@ -100,7 +98,6 @@ def history(request):
     template_name = 'main/history.html'
     
     history = History.objects.all()
-    print(*history)
 
     return render(request, template_name, {'history': history})
 
