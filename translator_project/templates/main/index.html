@@ -1,7 +1,5 @@
-
 {% extends 'base.html' %}
 {% load static %}
-
 
 {% block title %}
 Транслятор: Главная
@@ -9,47 +7,53 @@
 
 {% block content %}
 
-  <!-- Контент -->
-  <div class="container lg">
-	<h1 class="text-center">Преобразуйте Pascal в Python</h1>
-	<div class="row mt-4">
-		<!-- Блок ввода кода -->
-		<div class="col-md-8">
-			<form action="" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				{{ form.as_p }}
-				<button class="btn btn-primary">Конвертировать</button>
-			</form>
-		</div>
-		
-		<!-- Блок Drag and Drop -->
-		<div class="col-md-4 form-control prettyprint" style="display: auto;">
-			<pre style="margin: 0;"><code>{{ python_code }}</code></pre>
-		</div>
+<!-- Контент -->
+<div class="container lg">
+  <h1 class="text-center">Преобразуй Pascal в Python</h1>
+  <div class="row mt-4">
+    <!-- Блок ввода кода -->
+    <div class="col-md-6">
+      <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary">Конвертировать</button>
+      </form>
+    </div>
 
-
-	</div>
-	<!-- Кнопки -->
-	<div class="d-flex justify-content-end gap-2 mt-3">
-		<button class="btn btn-outline-secondary">Копировать</button>
-		<button class="btn btn-primary">Конвертировать</button>
-		<button class="btn btn-outline-secondary">Увеличить редактор</button>
-	</div>
-	<!-- Консоль -->
-	<div class="mt-4">
-		<h5>Вывод компилятора:</h5>
-		<div class="console">
-			{% for data in console %}
-				<div class="{{data.status.name}}">[{{ data.time_now}}]: {{data.message}}</div>	
-		  	{% endfor %}
-		</div>
-	</div>
+    <!-- Блок Drag and Drop -->
+    <div class="col-md-6">
+        <textarea class="form-control prettyprint" rows="15">{{ python_code }}</textarea>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button class="btn btn-outline-secondary">Копировать</button>
+          <button class="btn btn-outline-secondary">Увеличить редактор</button>
+        </div>    
+    </div>
+  </div>
+  
+  <!-- Кнопки -->
+  
+  <!-- Консоль -->
+  <div class="mt-4">
+    <h5>Вывод компилятора:</h5>
+    <div class="console" id="console-output" style="height: 250px; overflow-y: auto;">
+      {% for data in console %}
+        <div class="{{data.status.name}}">[{{ data.time_now }}]: {{ data.message }}</div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
+
 {% endblock %}
 
 {% block include_scripts %}
-	<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-	<script src="{% static 'js/main.js' %}"></script>
-
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+  // Автопролистывание консоли
+  const consoleOutput = document.getElementById('console-output');
+  if (consoleOutput) {
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+  }
+</script>
 {% endblock %}
