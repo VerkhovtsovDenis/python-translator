@@ -94,3 +94,17 @@ def index(request):
 def about(request):
     template_name = 'pages/about.html'
     return render(request, template_name)
+
+def history(request):
+    template_name = 'main/history.html'
+    
+    history = History.objects.all()
+    print(*history)
+
+    return render(request, template_name, {'history': history})
+
+def history_del(request):
+    # Удалить все объекты из модели History
+    History.objects.all().delete()
+    # Перенаправить на страницу истории
+    return redirect('/history/', permanent=True)
