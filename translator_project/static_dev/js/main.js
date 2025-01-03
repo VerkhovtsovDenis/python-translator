@@ -1,18 +1,14 @@
-// const codeBlock = document.getElementById('id_text');
+const all_td = document.getElementsByTagName('td');
 
-// codeBlock.onchange = () => {
-//     /// Тут должна произайти замена одного блока на второй
-//     console.log(codeBlock.attributes)
-
-// }
-
-
-// onPageLoad = () => {
-//     codeBlock.value = "program aaa;\n\
-// var a: read;\n\
-// begin\n\
-// a := 2;\n\
-// end.\n"
-// }
-
-// onPageLoad()
+for (let td of all_td) {
+    td.onclick = () => {
+        const content = td.textContent || td.innerText;
+        navigator.clipboard.writeText(content)
+            .then(() => {
+                console.log('РЎРѕРґРµСЂР¶РёРјРѕРµ СЃРєРѕРїРёСЂРѕРІР°РЅРѕ РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°:', content);
+            })
+            .catch(err => {
+                console.error('РћС€РёР±РєР° РїСЂРё РєРѕРїРёСЂРѕРІР°РЅРёРё:', err);
+            });
+    };
+}

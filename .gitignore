@@ -2,4 +2,4 @@ venv/
 __pycache__/
 .vscode/
 ~$*
-translator.log
+*/translator.log

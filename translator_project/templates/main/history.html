@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 История использования
@@ -33,10 +34,10 @@
           <th scope="row">{{ forloop.counter }}</th>
           <td>{{ token.ip_address }}</td>
           <td>{{ token.req_date }}</td>
-          <td>{{ token.pascal_code|default:"-" | truncatechars:20 }}</td>
-          <td>{{ token.python_code|default:"-" | truncatechars:20}}</td>
-          <td>{{ token.translating_info|default:"-" | truncatechars:20}}</td>
-          <td>{{ token.translating_errors|default:"-" | truncatechars:20}}</td>
+          <td>{{ token.pascal_code|default:"-" }}</td>
+          <td>{{ token.python_code|default:"-" }}</td>
+          <td>{{ token.translating_info|default:"-" }}</td>
+          <td>{{ token.translating_errors|default:"-" }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -46,4 +47,8 @@
   <p>История запросов пуста.</p>
 {% endif %}
 
+{% endblock %}
+
+{% block include_scripts %}
+<script src="{% static 'js/main.js' %}"></script>
 {% endblock %}
